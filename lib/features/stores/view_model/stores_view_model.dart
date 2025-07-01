@@ -6,6 +6,8 @@ class StoresViewModel extends ChangeNotifier {
   final StoresRepository _repository = StoresRepository();
   GoogleMapController? mapController;
   StoresData? selectedStore;
+  List<StoresData> _allStores = [];
+  List<StoresData> visibleStores = [];
 
   ApiResponse<StoresLocationResponseModel> storesResponse = ApiResponse.initial();
 
@@ -24,6 +26,20 @@ class StoresViewModel extends ChangeNotifier {
     }
   }
 
+  void filterStores(String query) {
+    if (query.isEmpty) {
+      visibleStores = List.from(_allStores);
+    } else {
+      visibleStores =
+          _allStores.where((store) {
+            final name = store.storeLocation?.toLowerCase() ?? '';
+            final q = query.toLowerCase();
+            return name.contains(q);
+          }).toList();
+    }
+    notifyListeners();
+  }
+
   Future<void> getStoresList() async {
     storesResponse = ApiResponse.setResponse(ApiResponse.loading());
     notifyListeners();
@@ -37,6 +53,8 @@ class StoresViewModel extends ChangeNotifier {
       },
       (r) async {
         storesResponse = ApiResponse.setResponse(ApiResponse.completed(r));
+        _allStores = r.data!;
+        visibleStores = r.data!;
         notifyListeners();
       },
     );

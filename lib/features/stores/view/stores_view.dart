@@ -34,21 +34,41 @@ class _StoresViewState extends State<StoresView> {
   }
 
   Widget _buildMainBody() {
-    return CustomScrollView(
-      controller: _scrollController,
-      slivers: [
-        SliverAppBar(
-          expandedHeight: MediaQuery.of(context).size.height * 0.4,
-          pinned: false,
-          floating: false,
-          flexibleSpace: FlexibleSpaceBar(background: _buildMap()),
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextField(
+            decoration: InputDecoration(
+              hintText: "Search stores...",
+              prefixIcon: Icon(Icons.search),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            onChanged: (query) {
+              _viewModel.filterStores(query);
+            },
+          ),
         ),
+        Expanded(
+          child: CustomScrollView(
+            controller: _scrollController,
+            slivers: [
+              SliverAppBar(
+                expandedHeight: MediaQuery.of(context).size.height * 0.4,
+                pinned: false,
+                floating: false,
+                flexibleSpace: FlexibleSpaceBar(background: _buildMap()),
+              ),
 
-        SliverList(
-          delegate: SliverChildBuilderDelegate((context, index) {
-            final store = _viewModel.storesResponse.data!.data![index];
-            return Padding(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6), child: _buildStoreTile(store: store));
-          }, childCount: _viewModel.storesResponse.data?.data?.length ?? 0),
+              SliverList(
+                delegate: SliverChildBuilderDelegate((context, index) {
+                  if (_viewModel.visibleStores.isEmpty) return SizedBox.shrink();
+                  final store = _viewModel.visibleStores[index];
+                  return Padding(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6), child: _buildStoreTile(store: store));
+                }, childCount: _viewModel.visibleStores.length ?? 0),
+              ),
+            ],
+          ),
         ),
       ],
     );
