@@ -36,13 +36,16 @@ class _StoresViewState extends State<StoresView> {
   Widget _buildMainBody() {
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
+        Container(
+          color: Colors.orange,
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12),
           child: TextField(
             decoration: InputDecoration(
+              fillColor: Colors.white,
+              filled: true,
               hintText: "Search stores...",
               prefixIcon: Icon(Icons.search),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
             ),
             onChanged: (query) {
               _viewModel.filterStores(query);
