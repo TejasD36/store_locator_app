@@ -12,6 +12,7 @@ export 'package:flutter/foundation.dart';
 export 'package:flutter/material.dart';
 export 'package:google_maps_flutter/google_maps_flutter.dart';
 export 'package:provider/provider.dart';
+export 'package:sliver_tools/sliver_tools.dart';
 export 'package:talker_dio_logger/talker_dio_logger_interceptor.dart';
 export 'package:talker_dio_logger/talker_dio_logger_settings.dart';
 

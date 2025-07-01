@@ -12,6 +12,7 @@ class StoresView extends StatefulWidget {
 
 class _StoresViewState extends State<StoresView> {
   late StoresViewModel _viewModel;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -33,13 +34,22 @@ class _StoresViewState extends State<StoresView> {
   }
 
   Widget _buildMainBody() {
-    return Column(
-      children: [
-        // Top Half - Map
-        Expanded(flex: 1, child: _buildMap()),
+    return CustomScrollView(
+      controller: _scrollController,
+      slivers: [
+        SliverAppBar(
+          expandedHeight: MediaQuery.of(context).size.height * 0.4,
+          pinned: false,
+          floating: false,
+          flexibleSpace: FlexibleSpaceBar(background: _buildMap()),
+        ),
 
-        // Bottom Half - Store List
-        Expanded(flex: 1, child: _buildStoreList()),
+        SliverList(
+          delegate: SliverChildBuilderDelegate((context, index) {
+            final store = _viewModel.storesResponse.data!.data![index];
+            return Padding(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6), child: _buildStoreTile(store: store));
+          }, childCount: _viewModel.storesResponse.data?.data?.length ?? 0),
+        ),
       ],
     );
   }
@@ -88,22 +98,10 @@ class _StoresViewState extends State<StoresView> {
     );
   }
 
-  Widget _buildStoreList() {
-    return ListView.separated(
-      padding: const EdgeInsets.all(12),
-      itemCount: _viewModel.storesResponse.data?.data?.length ?? 0,
-      separatorBuilder: (_, __) => const SizedBox(height: 8),
-      itemBuilder: (context, index) {
-        final store = _viewModel.storesResponse.data!.data![index];
-
-        return _buildStoreTile(store: store);
-      },
-    );
-  }
-
   Widget _buildStoreTile({required StoresData store}) {
     return InkWell(
       onTap: () {
+        _scrollController.animateTo(0, duration: Duration(milliseconds: 500), curve: Curves.easeOut);
         _viewModel.onStoreTileTapped(store);
       },
       child: Container(
@@ -130,7 +128,7 @@ class _StoresViewState extends State<StoresView> {
                           children: [
                             Text(store.storeLocation ?? "No name", style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
                             const SizedBox(height: 4),
-                            Text(store.storeAddress ?? "No address", style: const TextStyle(fontSize: 14, color: Colors.black)),
+                            Text(store.storeAddress ?? "No address", style: const TextStyle(fontSize: 14, color: Colors.black54)),
                           ],
                         ),
                       ),
@@ -140,16 +138,13 @@ class _StoresViewState extends State<StoresView> {
                             (store.distance != null)
                                 ? Text(
                                   "${store.distance!.toStringAsFixed(2)} km away",
-                                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                                  style: const TextStyle(fontSize: 12, color: Colors.black45),
                                 )
                                 : SizedBox.shrink(),
                       ),
                     ],
                   ),
-                  Text(
-                    "${store.dayOfWeekLabel} - ${store.startTimeLabel} - ${store.endTimeLabel}",
-                    style: const TextStyle(fontSize: 12, color: Colors.grey),
-                  ),
+                  Text("${store.dayOfWeekLabel} - ${store.startTimeLabel} - ${store.endTimeLabel}"),
                 ],
               ),
             ),

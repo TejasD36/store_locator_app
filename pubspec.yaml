@@ -18,6 +18,7 @@ dependencies:
   dio: ^5.8.0+1
   google_maps_flutter: ^2.12.3
   provider: ^6.1.5
+  sliver_tools: ^0.2.12
   talker_dio_logger: ^4.9.1
 
 dev_dependencies:
